@@ -1,22 +1,24 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { Car } from 'src/interfaces/car.interface';
-import { CreateCarDto } from './dto/cars.dto';
+import { v4 as uuidv4 } from 'uuid';
+
+import { Car } from './interfaces/car.interface';
+import { CreateCarDto, UpdateCarDto } from './dto/cars.dto';
 
 @Injectable()
 export class CarsService {
   private readonly cars: Car[] = [
     {
-      id: 1,
+      id: uuidv4(),
       brand: 'Toyota',
       model: 'Corolla',
     },
     {
-      id: 2,
+      id: uuidv4(),
       brand: 'BMW',
       model: 'X5',
     },
     {
-      id: 3,
+      id: uuidv4(),
       brand: 'Mercedes',
       model: 'C-Class',
     },
@@ -26,7 +28,7 @@ export class CarsService {
     return this.cars;
   }
 
-  findOne(id: number) {
+  findOne(id: string) {
     const car = this.cars.find((car) => car.id === id);
 
     if (!car) throw new NotFoundException(`Car with id ${id} not found`);
@@ -34,22 +36,21 @@ export class CarsService {
     return car;
   }
 
-  create(body: CreateCarDto) {
-    this.cars.push(body);
+  create(createCarDto: CreateCarDto) {
+    this.cars.push({ id: uuidv4(), ...createCarDto });
     return this.cars.at(-1);
   }
 
-  update(id: number, body: any) {
+  update(id: string, updateCarDto: UpdateCarDto) {
     const car = this.findOne(id);
     const index = this.cars.indexOf(car);
-    this.cars[index] = { ...car, ...body };
+    this.cars[index] = { ...car, ...updateCarDto, id };
     return this.cars[index];
   }
 
-  delete(id: number) {
+  delete(id: string) {
     const car = this.findOne(id);
     const index = this.cars.indexOf(car);
-    this.cars.splice(index, 1);
-    return this.cars[index];
+    return this.cars.splice(index, 1);
   }
 }

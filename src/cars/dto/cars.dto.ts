@@ -1,13 +1,24 @@
-import { IsInt, IsPositive, IsString } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateCarDto {
-  @IsInt()
-  @IsPositive()
-  id: number;
-
   @IsString()
   brand: string;
 
   @IsString()
   model: string;
+}
+
+export class UpdateCarDto {
+  @IsString()
+  @IsUUID()
+  @IsOptional()
+  id?: string;
+
+  @IsString()
+  @IsOptional()
+  brand?: string;
+
+  @IsString()
+  @IsOptional()
+  model?: string;
 }
